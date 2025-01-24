@@ -1,23 +1,15 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from 'react-router-dom';
-import NavBar from './components/Navbar';
-import Books from './components/Books';
-import Categories from './components/Categories';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import "./index.css";
+import NavBar from "./components/Navbar";
 
-function App() {
+const App = () => {
   return (
-    <BrowserRouter>
+    <div>
       <NavBar />
-      <Routes>
-        <Route index element={<Books />} />
-        <Route path="/" element={<Books />} />
-        <Route path="/categories" element={<Categories />} />
-      </Routes>
-    </BrowserRouter>
+      <Outlet />
+    </div>
   );
-}
+};
 
 export default App;

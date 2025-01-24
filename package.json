@@ -1,7 +1,6 @@
 {
-  "name": "microverse-react-bookstore",
+  "name": "react-books-gen",
   "version": "0.1.0",
-  "homepage": "https://benawi.github.io/Microverse-React-Bookstore",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
@@ -31,12 +30,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -71,14 +64,5 @@
     "stylelint-scss": "^3.21.0"
   },
   "description": "<a name=\"readme-top\"></a>",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Benawi/Microverse-React-Bookstore.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Benawi/Microverse-React-Bookstore/issues"
-  }
+  "main": "index.js"
 }

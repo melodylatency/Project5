@@ -1,44 +1,44 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
-import { addBook } from '../redux/books/booksSlice';
-import '../styles/AddBook.css';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+import { addBook } from "../redux/books/booksSlice";
+import "../styles/AddBook.css";
 
 const categories = [
-  'Select Category',
-  'Action',
-  'Dystopian',
-  'Fantasy',
-  'History',
-  'Horror',
-  'Kids',
-  'Learning',
-  'Sci-Fi',
-  'Spritual',
-  'Romance',
-  'Thriller',
-  'Realist',
+  "Select Category",
+  "Action",
+  "Dystopian",
+  "Fantasy",
+  "History",
+  "Horror",
+  "Kids",
+  "Learning",
+  "Sci-Fi",
+  "Spritual",
+  "Romance",
+  "Thriller",
+  "Realist",
 ];
 function AddBook() {
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [category, setcategory] = useState('Select category');
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [category, setcategory] = useState("Select category");
 
   const handleSubmit = async () => {
-    if (author !== '' && title !== '') {
+    if (author !== "" && title !== "") {
       dispatch(
         addBook({
           item_id: uuidv4(),
           title,
           author,
           category,
-        }),
+        })
       )
         .unwrap()
         .then(() => {
-          setTitle('');
-          setAuthor('');
+          setTitle("");
+          setAuthor("");
         });
     }
   };
@@ -82,11 +82,11 @@ function AddBook() {
                 style={{ flex: 2 }}
                 onChange={(e) => setcategory(e.target.value)}
               >
-                {
-          categories.map((genre) => (
-            <option key={uuidv4()} value={genre}>{genre}</option>
-          ))
-        }
+                {categories.map((genre) => (
+                  <option key={uuidv4()} value={genre}>
+                    {genre}
+                  </option>
+                ))}
               </select>
               <button style={{ flex: 1 }} type="button" onClick={handleSubmit}>
                 Add
