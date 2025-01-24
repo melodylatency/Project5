@@ -45,7 +45,6 @@ function AddBook() {
 
   return (
     <>
-      <hr />
       <div className="container ">
         <h2 className="addhead">ADD NEW BOOK</h2>
         <div>
