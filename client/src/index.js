@@ -10,12 +10,12 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import Books from "./components/Books";
+import BookList from "./components/BookList";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" index={true} element={<Books />} />
+      <Route path="/" index={true} element={<BookList />} />
     </Route>
   )
 );

@@ -1,19 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
-import path from "path";
 import faker from "faker";
 import seedrandom from "seedrandom";
 
 dotenv.config();
 
-const __dirname = path.resolve();
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Generate random books based on user input (seed, likes, reviews, page)
-function generateBooks(seed, page, likesPerBook, reviewsPerBook) {
-  const rng = seedrandom(seed + page); // Combine seed and page to ensure consistency
+// Generate random books based on user input
+function generateBooks(language, seed, page, reviewCount) {
+  const rng = seedrandom(`${language}-${seed}-${page}`); // Combine parameters for consistent results
   const books = [];
 
   for (let i = 0; i < 20; i++) {
@@ -22,9 +19,9 @@ function generateBooks(seed, page, likesPerBook, reviewsPerBook) {
       isbn: faker.random.uuid(),
       title: faker.lorem.words(3),
       author: faker.name.findName(),
+      language: language,
       publisher: faker.company.companyName(),
-      likes: Math.floor(rng() * likesPerBook),
-      reviews: Math.floor(rng() * reviewsPerBook),
+      reviews: Math.floor(rng() * reviewCount),
       coverImage: faker.image.imageUrl(),
     };
     books.push(book);
@@ -33,29 +30,17 @@ function generateBooks(seed, page, likesPerBook, reviewsPerBook) {
   return books;
 }
 
-// API route to get book data (data generation happens here)
+// API route to get book data
 app.get("/api/books", (req, res) => {
-  const { seed, page, likesPerBook, reviewsPerBook } = req.query;
+  const { language, seed, page, reviewCount } = req.query;
 
-  if (!seed || !page || !likesPerBook || !reviewsPerBook) {
+  if (!language || !seed || !page || !reviewCount) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
 
-  const books = generateBooks(seed, page, likesPerBook, reviewsPerBook);
+  const books = generateBooks(language, seed, page, reviewCount);
   res.json(books);
 });
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "frontend/build")));
-
-  app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
-  );
-} else {
-  app.get("/", (req, res) => {
-    res.send("API running...");
-  });
-}
 
 // Start the server
 app.listen(PORT, () => {
