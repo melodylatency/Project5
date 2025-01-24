@@ -123,7 +123,7 @@ const BookList = () => {
       <InfiniteScroll
         dataLength={books.length}
         next={fetchNextPage}
-        hasMore={true} // You can modify this based on API response
+        hasMore={books.length === 10} // Ensure more books are loaded if there are exactly 10 books on the current page
         loader={<h4>Loading...</h4>}
       >
         <table className="w-full">
