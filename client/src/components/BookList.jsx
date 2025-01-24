@@ -3,6 +3,8 @@ import { useGetBooksQuery } from "../redux/slices/booksApiSlice"; // assuming yo
 import BookRow from "./BookRow"; // A component for rendering a single book
 import InfiniteScroll from "react-infinite-scroll-component";
 import Papa from "papaparse";
+import { useDispatch } from "react-redux";
+import { addBooks } from "../redux/slices/booksSlice"; // Correct import for the action creator
 
 const BookList = () => {
   // Default values
@@ -10,6 +12,8 @@ const BookList = () => {
   const defaultSeed = Math.floor(Math.random() * 1000000); // Random seed if not provided
   const defaultPage = 1;
   const defaultReviews = 5; // Default average reviews per book
+
+  const dispatch = useDispatch();
 
   // States for query parameters
   const [language, setLanguage] = useState(defaultLanguage);
@@ -31,7 +35,10 @@ const BookList = () => {
 
   // Function to handle page scrolling and load more books
   const fetchNextPage = () => {
-    setPage((prev) => prev + 1); // Increment page number for infinite scroll
+    setPage((prevPage) => prevPage + 1); // Increment the page number
+    if (books) {
+      dispatch(addBooks(books)); // Append new books to the Redux store
+    }
   };
 
   // Function to handle CSV export

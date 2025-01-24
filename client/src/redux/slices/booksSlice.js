@@ -14,9 +14,9 @@ const booksSlice = createSlice({
       state.books = action.payload;
       localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
     },
-    // Action to add a single book to the books array
-    addBook: (state, action) => {
-      state.books.push(action.payload);
+    // Action to add multiple books to the books array
+    addBooks: (state, action) => {
+      state.books = [...state.books, ...action.payload]; // Append new books to the existing array
       localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
     },
     // Action to remove a book by ISBN
@@ -32,7 +32,8 @@ const booksSlice = createSlice({
   },
 });
 
-export const { useSetBooks, useAddBook, useRemoveBook, useClearBooks } =
+// Correctly export action creators without the `use` prefix
+export const { setBooks, addBooks, removeBook, clearBooks } =
   booksSlice.actions;
 
 export default booksSlice.reducer;

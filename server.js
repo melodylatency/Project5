@@ -11,18 +11,22 @@ const PORT = process.env.PORT || 5000;
 // Generate random books based on user input
 // Adjust the number of books generated per page to 10
 function generateBooks(language, seed, page, reviewCount) {
-  const rng = seedrandom(`${language}-${seed}-${page}`); // Combine parameters for consistent results
+  const rng = seedrandom(`${language}-${seed}-${page}`);
   const books = [];
 
   for (let i = 0; i < 10; i++) {
+    // Fractional review logic
+    const bookReviews =
+      rng() < reviewCount ? Math.ceil(rng() * reviewCount) : 0;
+
     const book = {
-      index: i + 1 + (page - 1) * 10, // Make sure the index increments correctly
-      isbn: faker.datatype.uuid(), // Updated method for generating UUID
+      index: i + 1 + (page - 1) * 10,
+      isbn: faker.datatype.uuid(),
       title: faker.lorem.words(3),
       author: faker.name.findName(),
       language: language,
       publisher: faker.company.companyName(),
-      reviews: Math.floor(rng() * reviewCount),
+      reviews: bookReviews,
       coverImage: faker.image.imageUrl(),
     };
     books.push(book);
