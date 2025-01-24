@@ -1,12 +1,15 @@
-const express = require("express");
-const path = require("path");
-const faker = require("faker");
-const seedrandom = require("seedrandom");
+import express from "express";
+import dotenv from "dotenv";
+import path from "path";
+import faker from "faker";
+import seedrandom from "seedrandom";
+
+dotenv.config();
+
+const __dirname = path.resolve();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Serve static files from the React app (for production)
-app.use(express.static(path.join(__dirname, "build")));
 
 // Generate random books based on user input (seed, likes, reviews, page)
 function generateBooks(seed, page, likesPerBook, reviewsPerBook) {
@@ -42,10 +45,17 @@ app.get("/api/books", (req, res) => {
   res.json(books);
 });
 
-// Serve the React app for any other routes (this serves the React front-end)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "frontend/build")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API running...");
+  });
+}
 
 // Start the server
 app.listen(PORT, () => {
