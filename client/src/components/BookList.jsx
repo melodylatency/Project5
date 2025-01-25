@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useGetBooksQuery } from "../redux/slices/booksApiSlice"; // assuming you have the API slice
-import BookRow from "./BookRow"; // A component for rendering a single book
+import { useGetBooksQuery } from "../redux/slices/booksApiSlice"; // API slice
 import InfiniteScroll from "react-infinite-scroll-component";
 import Papa from "papaparse";
 import { useDispatch } from "react-redux";
-import { addBooks } from "../redux/slices/booksSlice"; // Correct import for the action creator
+import { addBooks, removeBook } from "../redux/slices/booksSlice"; // Actions
 
 const BookList = () => {
   // Default values
   const defaultLanguage = "English (USA)";
-  const defaultSeed = Math.floor(Math.random() * 1000000); // Random seed if not provided
+  const defaultSeed = Math.floor(Math.random() * 1000000); // Random seed
   const defaultPage = 1;
-  const defaultReviews = 5; // Default average reviews per book
+  const defaultReviews = 5;
 
   const dispatch = useDispatch();
 
@@ -20,6 +19,9 @@ const BookList = () => {
   const [seed, setSeed] = useState(defaultSeed);
   const [page, setPage] = useState(defaultPage);
   const [reviews, setReviews] = useState(defaultReviews);
+
+  // State for expanded rows
+  const [expandedRows, setExpandedRows] = useState({});
 
   // Fetch books using the query hook
   const {
@@ -35,51 +37,44 @@ const BookList = () => {
 
   // Function to handle page scrolling and load more books
   const fetchNextPage = () => {
-    setPage((prevPage) => prevPage + 1); // Increment the page number
+    setPage((prevPage) => prevPage + 1);
     if (books) {
-      dispatch(addBooks(books)); // Append new books to the Redux store
+      dispatch(addBooks(books));
     }
   };
 
   // Function to handle CSV export
   const handleExportCSV = () => {
-    const csvData = books.map((book) => ({
-      Index: book.index,
+    const csvData = books.map((book, index) => ({
+      Index: index + 1,
       ISBN: book.isbn,
       Title: book.title,
       Author: book.author,
       Publisher: book.publisher,
     }));
-    Papa.unparse(csvData, {
-      complete: (result) => {
-        const blob = new Blob([result.csv], { type: "text/csv" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "books.csv";
-        link.click();
-      },
-    });
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "books.csv";
+    link.click();
   };
 
-  // Handle changes in the seed input
-  const handleSeedChange = (event) => {
-    setSeed(event.target.value);
-    setPage(1); // Reset page to 1 when the seed is changed
+  // Toggle the expanded state for a row
+  const toggleExpand = (isbn) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [isbn]: !prev[isbn],
+    }));
   };
 
-  // Handle changes in reviews input
-  const handleReviewsChange = (event) => {
-    setReviews(parseFloat(event.target.value));
-  };
-
-  // Handle changes in language selection
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
-    setPage(1); // Reset page to 1 when language is changed
+  // Handle removing a book
+  const handleRemove = (isbn) => {
+    dispatch(removeBook(isbn));
   };
 
   useEffect(() => {
-    // You can save the seed and other settings to localStorage for persistence
+    // Save settings to localStorage
     localStorage.setItem("language", language);
     localStorage.setItem("seed", seed);
     localStorage.setItem("reviews", reviews);
@@ -92,38 +87,30 @@ const BookList = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Controls Section */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
-        {/* Language Selection */}
         <select
           value={language}
-          onChange={handleLanguageChange}
+          onChange={(e) => setLanguage(e.target.value)}
           className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         >
           <option value="English (USA)">English (USA)</option>
           <option value="German (Germany)">German (Germany)</option>
           <option value="French (France)">French (France)</option>
-          {/* Add more language options here */}
         </select>
-
-        {/* Seed Input */}
         <input
           type="number"
           value={seed}
-          onChange={handleSeedChange}
+          onChange={(e) => setSeed(e.target.value)}
           className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
           placeholder="Enter seed"
         />
-
-        {/* Reviews Input */}
         <input
           type="number"
           step="0.1"
           value={reviews}
-          onChange={handleReviewsChange}
+          onChange={(e) => setReviews(parseFloat(e.target.value))}
           className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
           placeholder="Avg reviews per book"
         />
-
-        {/* Export Button */}
         <button
           onClick={handleExportCSV}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
@@ -152,20 +139,46 @@ const BookList = () => {
                 <th className="px-4 py-2">Title</th>
                 <th className="px-4 py-2">Author</th>
                 <th className="px-4 py-2">Publisher</th>
+                <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {books.map((book, index) => (
-                <tr
-                  key={book.isbn}
-                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                >
-                  <td className="px-4 py-2">{index + 1}</td>
-                  <td className="px-4 py-2">{book.isbn}</td>
-                  <td className="px-4 py-2">{book.title}</td>
-                  <td className="px-4 py-2">{book.author}</td>
-                  <td className="px-4 py-2">{book.publisher}</td>
-                </tr>
+                <>
+                  <tr
+                    key={book.isbn}
+                    onClick={() => toggleExpand(book.isbn)}
+                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                  >
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">{book.isbn}</td>
+                    <td className="px-4 py-2">{book.title}</td>
+                    <td className="px-4 py-2">{book.author}</td>
+                    <td className="px-4 py-2">{book.publisher}</td>
+                    <td className="px-4 py-2 flex items-center space-x-2"></td>
+                  </tr>
+                  {expandedRows[book.isbn] && (
+                    <tr>
+                      <td colSpan={6} className="p-4 bg-gray-100">
+                        <div className="flex space-x-4">
+                          <img
+                            src={book.coverImage}
+                            alt={`${book.title} cover`}
+                            className="w-32 h-48 object-cover rounded-lg"
+                          />
+                          <div>
+                            <p className="font-semibold">Reviews:</p>
+                            <ul className="list-disc pl-4 text-sm text-gray-600">
+                              <li>"A wonderful read!" - Reviewer 1</li>
+                              <li>"Captivating story!" - Reviewer 2</li>
+                              <li>"Not my favorite." - Reviewer 3</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>
