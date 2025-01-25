@@ -89,13 +89,14 @@ const BookList = () => {
   if (error) return <p>Error loading books.</p>;
 
   return (
-    <div>
-      <div className="flex space-x-4 mb-4">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Controls Section */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
         {/* Language Selection */}
         <select
           value={language}
           onChange={handleLanguageChange}
-          className="border p-2"
+          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         >
           <option value="English (USA)">English (USA)</option>
           <option value="German (Germany)">German (Germany)</option>
@@ -108,7 +109,7 @@ const BookList = () => {
           type="number"
           value={seed}
           onChange={handleSeedChange}
-          className="border p-2"
+          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
           placeholder="Enter seed"
         />
 
@@ -118,38 +119,58 @@ const BookList = () => {
           step="0.1"
           value={reviews}
           onChange={handleReviewsChange}
-          className="border p-2"
-          placeholder="Average reviews per book"
+          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+          placeholder="Avg reviews per book"
         />
+
+        {/* Export Button */}
+        <button
+          onClick={handleExportCSV}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+        >
+          Export to CSV
+        </button>
       </div>
 
-      <button onClick={handleExportCSV} className="mb-4 p-2 border">
-        Export to CSV
-      </button>
-
-      <InfiniteScroll
-        dataLength={books.length}
-        next={fetchNextPage}
-        hasMore={books.length === 10} // Ensure more books are loaded if there are exactly 10 books on the current page
-        loader={<h4>Loading...</h4>}
-      >
-        <table className="w-full">
-          <thead>
-            <tr>
-              <th>Index</th>
-              <th>ISBN</th>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Publisher</th>
-            </tr>
-          </thead>
-          <tbody>
-            {books.map((book) => (
-              <BookRow key={book.isbn} book={book} />
-            ))}
-          </tbody>
-        </table>
-      </InfiniteScroll>
+      {/* Books Table */}
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <InfiniteScroll
+          dataLength={books.length}
+          next={fetchNextPage}
+          hasMore={books.length === 10}
+          loader={
+            <div className="p-4 text-center">
+              <h4 className="text-gray-600">Loading...</h4>
+            </div>
+          }
+        >
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="px-4 py-2">Index</th>
+                <th className="px-4 py-2">ISBN</th>
+                <th className="px-4 py-2">Title</th>
+                <th className="px-4 py-2">Author</th>
+                <th className="px-4 py-2">Publisher</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {books.map((book, index) => (
+                <tr
+                  key={book.isbn}
+                  className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                >
+                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="px-4 py-2">{book.isbn}</td>
+                  <td className="px-4 py-2">{book.title}</td>
+                  <td className="px-4 py-2">{book.author}</td>
+                  <td className="px-4 py-2">{book.publisher}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </InfiniteScroll>
+      </div>
     </div>
   );
 };
