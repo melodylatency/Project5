@@ -9,15 +9,15 @@ const booksSlice = createSlice({
   name: "books",
   initialState,
   reducers: {
-    // Action to set the books array (after fetching from backend)
-    setBooks: (state, action) => {
-      state.books = action.payload;
-      localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
-    },
+    // // Action to set the books array (after fetching from backend)
+    // setBooks: (state, action) => {
+    //   state.books = action.payload;
+    //   localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
+    // },
     // Action to add multiple books to the books array
     addBooks: (state, action) => {
       state.books = [...state.books, ...action.payload]; // Append new books to the existing array
-      localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
+      // localStorage.setItem("books", JSON.stringify(state)); // Persist to localStorage
     },
     // Action to remove a book by ISBN
     removeBook: (state, action) => {
