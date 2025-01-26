@@ -1,35 +1,78 @@
-import React, { useEffect } from "react";
-import { useGetBooksQuery } from "../redux/slices/booksApiSlice";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useGetBooksQuery } from "../redux/slices/booksApiSlice";
 import {
   setBooks,
   setLanguage,
-  setReviews,
   setSeed,
-} from "../redux/slices/booksSlice"; // Ensure this action is imported correctly
-import Papa from "papaparse"; // Make sure PapaParse is installed and imported
+  setReviews,
+} from "../redux/slices/booksSlice";
+import Papa from "papaparse";
 
 const Header = () => {
-  const { language, seed, reviews, page } = useSelector((state) => state.books);
-
+  const { language, seed, reviews, page, books } = useSelector(
+    (state) => state.books
+  );
   const dispatch = useDispatch();
 
+  const [shouldFetch, setShouldFetch] = useState(false);
+
+  // Fetch books when necessary
   const {
-    data: books,
+    data: fetchedBooks,
     isLoading,
     error,
-  } = useGetBooksQuery({
-    language,
-    seed,
-    page,
-    reviewCount: reviews,
-  });
+  } = useGetBooksQuery(
+    {
+      language,
+      seed,
+      page,
+      reviewCount: reviews,
+    },
+    {
+      skip: !shouldFetch, // Skip the query on initial load unless user changes variables
+    }
+  );
 
-  console.log(error);
+  // On first load, check for localStorage books
+  useEffect(() => {
+    const storedBooks = JSON.parse(localStorage.getItem("books"));
+    if (storedBooks?.length > 0) {
+      // Use localStorage data on first load
+      dispatch(setBooks(storedBooks));
+    } else {
+      // If no books in localStorage, fetch from backend
+      setShouldFetch(true);
+    }
+  }, [dispatch]);
 
-  // Function to handle CSV export
+  // Update books in state and localStorage whenever fetchedBooks change
+  useEffect(() => {
+    if (!isLoading && fetchedBooks) {
+      dispatch(setBooks(fetchedBooks));
+      localStorage.setItem("books", JSON.stringify(fetchedBooks));
+    }
+  }, [fetchedBooks, isLoading, dispatch]);
+
+  // Handle dynamic changes to variables
+  const handleLanguageChange = (e) => {
+    dispatch(setLanguage(e.target.value));
+    setShouldFetch(true); // Trigger API call
+  };
+
+  const handleSeedChange = (e) => {
+    dispatch(setSeed(Number(e.target.value)));
+    setShouldFetch(true); // Trigger API call
+  };
+
+  const handleReviewsChange = (e) => {
+    dispatch(setReviews(parseFloat(e.target.value)));
+    setShouldFetch(true); // Trigger API call
+  };
+
+  // Handle CSV Export
   const handleExportCSV = () => {
-    if (!books || books.length === 0) return; // Prevent exporting if no books
+    if (!books || books.length === 0) return;
     const csvData = books.map((book, index) => ({
       Index: index + 1,
       ISBN: book.isbn,
@@ -45,25 +88,14 @@ const Header = () => {
     link.click();
   };
 
-  // Save settings to localStorage whenever parameters change
-  useEffect(() => {
-    if (!isLoading && books.length === 0) {
-      dispatch(setBooks(books));
-      dispatch(setLanguage(language));
-      dispatch(setSeed(seed));
-      dispatch(setReviews(reviews));
-    }
-  }, [books, language, seed, reviews, isLoading]);
-
-  // Show loading or error states
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading && shouldFetch) return <p>Loading...</p>;
   if (error) return <p>Error loading books.</p>;
 
   return (
     <div className="flex flex-wrap items-center gap-4 mb-6 py-3 px-6">
       <select
         value={language}
-        onChange={(e) => dispatch(setLanguage(e.target.value))}
+        onChange={handleLanguageChange}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
       >
         <option value="en">English (USA)</option>
@@ -73,7 +105,7 @@ const Header = () => {
       <input
         type="number"
         value={seed}
-        onChange={(e) => dispatch(setSeed(Number(e.target.value)))}
+        onChange={handleSeedChange}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Enter seed"
       />
@@ -81,7 +113,7 @@ const Header = () => {
         type="number"
         step="0.1"
         value={reviews}
-        onChange={(e) => dispatch(setReviews(parseFloat(e.target.value)))}
+        onChange={handleReviewsChange}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Avg reviews per book"
       />

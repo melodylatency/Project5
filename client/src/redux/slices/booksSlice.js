@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Load initial state from localStorage or fallback to an empty array
 const initialState = {
-  books: JSON.parse(localStorage.getItem("books")) || [], // Try loading from localStorage
+  books: JSON.parse(localStorage.getItem("books")) || [], // Load from localStorage
   language: localStorage.getItem("language") || "en",
   seed:
     JSON.parse(localStorage.getItem("seed")) ||
@@ -15,31 +14,29 @@ const booksSlice = createSlice({
   name: "books",
   initialState,
   reducers: {
-    // Action to set the books array (e.g., after fetching from backend)
     setBooks: (state, action) => {
       state.books = action.payload;
-      localStorage.setItem("books", JSON.stringify(state.books)); // Persist to localStorage
+      localStorage.setItem("books", JSON.stringify(state.books));
     },
     setLanguage: (state, action) => {
       state.language = action.payload;
-      localStorage.setItem("language", state.language); // Persist to localStorage
+      localStorage.setItem("language", state.language);
     },
     setSeed: (state, action) => {
       state.seed = action.payload;
-      localStorage.setItem("seed", JSON.stringify(state.seed)); // Persist to localStorage
+      localStorage.setItem("seed", JSON.stringify(state.seed));
     },
     setPage: (state, action) => {
       state.page = action.payload;
-      localStorage.setItem("page", JSON.stringify(state.page)); // Persist to localStorage
+      localStorage.setItem("page", JSON.stringify(state.page));
     },
     setReviews: (state, action) => {
       state.reviews = action.payload;
-      localStorage.setItem("reviews", JSON.stringify(state.reviews)); // Persist to localStorage
+      localStorage.setItem("reviews", JSON.stringify(state.reviews));
     },
   },
 });
 
-// Export action creators
 export const { setBooks, setLanguage, setSeed, setPage, setReviews } =
   booksSlice.actions;
 
