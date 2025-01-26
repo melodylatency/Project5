@@ -16,10 +16,12 @@ const Header = () => {
   );
   const dispatch = useDispatch();
 
-  dispatch(setLanguage(language));
-  dispatch(setSeed(seed));
-  dispatch(setReviews(reviews));
-  dispatch(setPage(page));
+  useEffect(() => {
+    dispatch(setLanguage(language));
+    dispatch(setSeed(seed));
+    dispatch(setReviews(reviews));
+    dispatch(setPage(page));
+  }, [dispatch, language, seed, reviews, page]);
 
   const [shouldFetch, setShouldFetch] = useState(false);
 
@@ -106,7 +108,7 @@ const Header = () => {
       >
         <option value="en">English (USA)</option>
         <option value="de">German (Germany)</option>
-        <option value="fr">French (France)</option>
+        <option value="ru">Russian (Russia)</option>
       </select>
       <input
         type="number"
