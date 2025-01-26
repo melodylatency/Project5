@@ -6,6 +6,7 @@ import {
   setLanguage,
   setSeed,
   setReviews,
+  setPage,
 } from "../redux/slices/booksSlice";
 import Papa from "papaparse";
 
@@ -14,6 +15,11 @@ const Header = () => {
     (state) => state.books
   );
   const dispatch = useDispatch();
+
+  dispatch(setLanguage(language));
+  dispatch(setSeed(seed));
+  dispatch(setReviews(reviews));
+  dispatch(setPage(page));
 
   const [shouldFetch, setShouldFetch] = useState(false);
 
