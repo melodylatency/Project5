@@ -8,23 +8,37 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Configure faker's locale dynamically based on language
+function setFakerLocale(language) {
+  switch (language) {
+    case "de":
+      faker.locale = "de";
+      break;
+    case "fr":
+      faker.locale = "fr";
+      break;
+    default:
+      faker.locale = "en";
+  }
+}
+
 // Generate random books based on user input
-// Adjust the number of books generated per page to 10
 function generateBooks(language, seed, page, reviewCount) {
   const rng = seedrandom(`${language}-${seed}-${page}`);
   const books = [];
 
+  // Set faker locale based on selected language
+  setFakerLocale(language);
+
   for (let i = 0; i < 10; i++) {
-    // Fractional review logic
     const bookReviews =
       rng() < reviewCount ? Math.ceil(rng() * reviewCount) : 0;
 
     const book = {
       index: i + 1 + (page - 1) * 10,
       isbn: faker.datatype.uuid(),
-      title: faker.lorem.words(3),
+      title: faker.commerce.productName(), // Replace this with localized logic if needed
       author: faker.name.findName(),
-      language: language,
       publisher: faker.company.companyName(),
       reviews: bookReviews,
       coverImage: faker.image.imageUrl(),
@@ -43,7 +57,12 @@ app.get("/api/books", (req, res) => {
     return res.status(400).json({ message: "Missing required parameters" });
   }
 
-  const books = generateBooks(language, seed, page, reviewCount);
+  const books = generateBooks(
+    language,
+    seed,
+    parseInt(page),
+    parseFloat(reviewCount)
+  );
   res.json(books);
 });
 

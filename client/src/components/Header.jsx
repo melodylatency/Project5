@@ -1,43 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useGetBooksQuery } from "../redux/slices/booksApiSlice";
-import { useDispatch } from "react-redux";
-import { setBooks } from "../redux/slices/booksSlice"; // Ensure this action is imported correctly
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setBooks,
+  setLanguage,
+  setReviews,
+  setSeed,
+} from "../redux/slices/booksSlice"; // Ensure this action is imported correctly
 import Papa from "papaparse"; // Make sure PapaParse is installed and imported
 
 const Header = () => {
-  // Default values
-  const defaultLanguage = "English (USA)";
-  const defaultSeed = Math.floor(Math.random() * 1000000); // Random seed
-  const defaultPage = 1;
-  const defaultReviews = 5;
-
-  // States for query parameters
-  const [language, setLanguage] = useState(defaultLanguage);
-  const [seed, setSeed] = useState(defaultSeed);
-  const [page, setPage] = useState(defaultPage);
-  const [reviews, setReviews] = useState(defaultReviews);
+  const { language, seed, reviews, page } = useSelector((state) => state.books);
 
   const dispatch = useDispatch();
 
-  // Query to fetch books
-  const {
-    data: books,
-    isLoading,
-    error,
-  } = useGetBooksQuery({
+  const { books, isLoading, error } = useGetBooksQuery({
     language,
     seed,
     page,
     reviewCount: reviews,
   });
-
-  // Dispatch books to Redux store when books are fetched
-  useEffect(() => {
-    if (books) {
-      dispatch(setBooks(books)); // Update Redux store with fetched books
-      console.log("Fetched books", books);
-    }
-  }, [books, dispatch]);
 
   // Function to handle CSV export
   const handleExportCSV = () => {
@@ -62,27 +44,33 @@ const Header = () => {
     localStorage.setItem("language", language);
     localStorage.setItem("seed", seed.toString());
     localStorage.setItem("reviews", reviews.toString());
-  }, [language, seed, reviews]);
+  }, [books, language, seed, reviews]);
+
+  useEffect(() => {
+    if (books) {
+      dispatch(setBooks(books));
+    }
+  }, [books]);
 
   // Show loading or error states
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading books.</p>;
 
   return (
-    <div className="flex flex-wrap items-center gap-4 mb-6">
+    <div className="flex flex-wrap items-center gap-4 mb-6 py-3 px-6">
       <select
         value={language}
-        onChange={(e) => setLanguage(e.target.value)}
+        onChange={(e) => dispatch(setLanguage(e.target.value))}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
       >
-        <option value="English (USA)">English (USA)</option>
-        <option value="German (Germany)">German (Germany)</option>
-        <option value="French (France)">French (France)</option>
+        <option value="en">English (USA)</option>
+        <option value="de">German (Germany)</option>
+        <option value="fr">French (France)</option>
       </select>
       <input
         type="number"
         value={seed}
-        onChange={(e) => setSeed(Number(e.target.value))}
+        onChange={(e) => dispatch(setSeed(Number(e.target.value)))}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Enter seed"
       />
@@ -90,7 +78,7 @@ const Header = () => {
         type="number"
         step="0.1"
         value={reviews}
-        onChange={(e) => setReviews(parseFloat(e.target.value))}
+        onChange={(e) => dispatch(setReviews(parseFloat(e.target.value)))}
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Avg reviews per book"
       />

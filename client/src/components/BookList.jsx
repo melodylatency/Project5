@@ -1,45 +1,12 @@
 import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useSelector, useDispatch } from "react-redux";
-import { addBooks } from "../redux/slices/booksSlice";
-import Header from "./Header";
+import { useSelector } from "react-redux";
 
 const BookList = () => {
   const [expandedRows, setExpandedRows] = useState({});
-  const dispatch = useDispatch();
 
-  // Fetch books using useSelector and ensure it's always an array
-  const books = useSelector((state) => state.books.books || []); // Use a default empty array if undefined
-  const [page, setPage] = useState(1); // Local state for pagination
+  const books = useSelector((state) => state.books.books || []);
 
-  // Function to handle page scrolling and load more books
-  const fetchNextPage = () => {
-    // Simulating fetching additional books for the next page
-    setPage((prevPage) => prevPage + 1);
-
-    // Example additional books payload (replace with API call if needed)
-    const newBooks = [
-      {
-        isbn: `isbn-${page + 1}-1`,
-        title: `Book ${page + 1}-1`,
-        author: `Author ${page + 1}-1`,
-        publisher: `Publisher ${page + 1}-1`,
-        coverImage: "https://via.placeholder.com/150",
-      },
-      {
-        isbn: `isbn-${page + 1}-2`,
-        title: `Book ${page + 1}-2`,
-        author: `Author ${page + 1}-2`,
-        publisher: `Publisher ${page + 1}-2`,
-        coverImage: "https://via.placeholder.com/150",
-      },
-    ];
-
-    // Dispatch the new books to Redux store
-    dispatch(addBooks(newBooks));
-  };
-
-  // Toggle the expanded state for a row
   const toggleExpand = (isbn) => {
     setExpandedRows((prev) => ({
       ...prev,
@@ -49,14 +16,12 @@ const BookList = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Controls Section */}
-      <Header />
       {/* Books Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <InfiniteScroll
           dataLength={books.length}
-          next={fetchNextPage}
-          hasMore={books.length < 100} // Arbitrary limit for demonstration
+          next={() => {}}
+          hasMore={books.length < 100}
           loader={
             <div className="p-4 text-center">
               <h4 className="text-gray-600">Loading...</h4>
