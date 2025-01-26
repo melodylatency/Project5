@@ -14,12 +14,18 @@ const Header = () => {
 
   const dispatch = useDispatch();
 
-  const { books, isLoading, error } = useGetBooksQuery({
+  const {
+    data: books,
+    isLoading,
+    error,
+  } = useGetBooksQuery({
     language,
     seed,
     page,
     reviewCount: reviews,
   });
+
+  console.log(error);
 
   // Function to handle CSV export
   const handleExportCSV = () => {
@@ -41,16 +47,13 @@ const Header = () => {
 
   // Save settings to localStorage whenever parameters change
   useEffect(() => {
-    localStorage.setItem("language", language);
-    localStorage.setItem("seed", seed.toString());
-    localStorage.setItem("reviews", reviews.toString());
-  }, [books, language, seed, reviews]);
-
-  useEffect(() => {
-    if (books) {
+    if (!isLoading && books.length === 0) {
       dispatch(setBooks(books));
+      dispatch(setLanguage(language));
+      dispatch(setSeed(seed));
+      dispatch(setReviews(reviews));
     }
-  }, [books]);
+  }, [books, language, seed, reviews, isLoading]);
 
   // Show loading or error states
   if (isLoading) return <p>Loading...</p>;

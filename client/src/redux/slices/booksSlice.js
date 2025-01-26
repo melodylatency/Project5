@@ -22,7 +22,7 @@ const booksSlice = createSlice({
     },
     setLanguage: (state, action) => {
       state.language = action.payload;
-      localStorage.setItem("language", JSON.stringify(state.language)); // Persist to localStorage
+      localStorage.setItem("language", state.language); // Persist to localStorage
     },
     setSeed: (state, action) => {
       state.seed = action.payload;
