@@ -1,63 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { useGetBooksQuery } from "../redux/slices/booksApiSlice"; // API slice
+import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Papa from "papaparse";
-import { useDispatch } from "react-redux";
-import { addBooks, removeBook } from "../redux/slices/booksSlice"; // Actions
+import { useSelector, useDispatch } from "react-redux";
+import { addBooks } from "../redux/slices/booksSlice";
+import Header from "./Header";
 
 const BookList = () => {
-  // Default values
-  const defaultLanguage = "English (USA)";
-  const defaultSeed = Math.floor(Math.random() * 1000000); // Random seed
-  const defaultPage = 1;
-  const defaultReviews = 5;
-
+  const [expandedRows, setExpandedRows] = useState({});
   const dispatch = useDispatch();
 
-  // States for query parameters
-  const [language, setLanguage] = useState(defaultLanguage);
-  const [seed, setSeed] = useState(defaultSeed);
-  const [page, setPage] = useState(defaultPage);
-  const [reviews, setReviews] = useState(defaultReviews);
-
-  // State for expanded rows
-  const [expandedRows, setExpandedRows] = useState({});
-
-  // Fetch books using the query hook
-  const {
-    data: books,
-    isLoading,
-    error,
-  } = useGetBooksQuery({
-    language,
-    seed,
-    page,
-    reviewCount: reviews,
-  });
+  // Fetch books using useSelector and ensure it's always an array
+  const books = useSelector((state) => state.books.books || []); // Use a default empty array if undefined
+  const [page, setPage] = useState(1); // Local state for pagination
 
   // Function to handle page scrolling and load more books
   const fetchNextPage = () => {
+    // Simulating fetching additional books for the next page
     setPage((prevPage) => prevPage + 1);
-    if (books) {
-      dispatch(addBooks(books));
-    }
-  };
 
-  // Function to handle CSV export
-  const handleExportCSV = () => {
-    const csvData = books.map((book, index) => ({
-      Index: index + 1,
-      ISBN: book.isbn,
-      Title: book.title,
-      Author: book.author,
-      Publisher: book.publisher,
-    }));
-    const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "books.csv";
-    link.click();
+    // Example additional books payload (replace with API call if needed)
+    const newBooks = [
+      {
+        isbn: `isbn-${page + 1}-1`,
+        title: `Book ${page + 1}-1`,
+        author: `Author ${page + 1}-1`,
+        publisher: `Publisher ${page + 1}-1`,
+        coverImage: "https://via.placeholder.com/150",
+      },
+      {
+        isbn: `isbn-${page + 1}-2`,
+        title: `Book ${page + 1}-2`,
+        author: `Author ${page + 1}-2`,
+        publisher: `Publisher ${page + 1}-2`,
+        coverImage: "https://via.placeholder.com/150",
+      },
+    ];
+
+    // Dispatch the new books to Redux store
+    dispatch(addBooks(newBooks));
   };
 
   // Toggle the expanded state for a row
@@ -68,63 +47,16 @@ const BookList = () => {
     }));
   };
 
-  // Handle removing a book
-  const handleRemove = (isbn) => {
-    dispatch(removeBook(isbn));
-  };
-
-  useEffect(() => {
-    // Save settings to localStorage
-    localStorage.setItem("language", language);
-    localStorage.setItem("seed", seed);
-    localStorage.setItem("reviews", reviews);
-  }, [language, seed, reviews]);
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading books.</p>;
-
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Controls Section */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <select
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-        >
-          <option value="English (USA)">English (USA)</option>
-          <option value="German (Germany)">German (Germany)</option>
-          <option value="French (France)">French (France)</option>
-        </select>
-        <input
-          type="number"
-          value={seed}
-          onChange={(e) => setSeed(e.target.value)}
-          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="Enter seed"
-        />
-        <input
-          type="number"
-          step="0.1"
-          value={reviews}
-          onChange={(e) => setReviews(parseFloat(e.target.value))}
-          className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="Avg reviews per book"
-        />
-        <button
-          onClick={handleExportCSV}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
-        >
-          Export to CSV
-        </button>
-      </div>
-
+      <Header />
       {/* Books Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <InfiniteScroll
           dataLength={books.length}
           next={fetchNextPage}
-          hasMore={books.length === 10}
+          hasMore={books.length < 100} // Arbitrary limit for demonstration
           loader={
             <div className="p-4 text-center">
               <h4 className="text-gray-600">Loading...</h4>
@@ -144,9 +76,8 @@ const BookList = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {books.map((book, index) => (
-                <>
+                <React.Fragment key={book.isbn}>
                   <tr
-                    key={book.isbn}
                     onClick={() => toggleExpand(book.isbn)}
                     className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                   >
@@ -178,7 +109,7 @@ const BookList = () => {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
