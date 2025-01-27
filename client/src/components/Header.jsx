@@ -31,36 +31,18 @@ const Header = () => {
     data: fetchedBooks,
     isLoading,
     error,
-  } = useGetBooksQuery(
-    {
-      language,
-      seed,
-      page: 1,
-      reviewCount: reviews,
-      likes,
-    },
-    {
-      skip: !shouldFetch, // Skip the query on initial load unless user changes variables
-    }
-  );
-
-  // On first load, check for localStorage books
-  useEffect(() => {
-    const storedBooks = JSON.parse(localStorage.getItem("books"));
-    if (storedBooks?.length > 0) {
-      // Use localStorage data on first load
-      dispatch(setBooks(storedBooks));
-    } else {
-      // If no books in localStorage, fetch from backend
-      setShouldFetch(true);
-    }
-  }, [dispatch]);
+  } = useGetBooksQuery({
+    language,
+    seed,
+    page: 1,
+    reviewCount: reviews,
+    likes,
+  });
 
   // Update books in state and localStorage whenever fetchedBooks change
   useEffect(() => {
     if (!isLoading && fetchedBooks) {
       dispatch(setBooks(fetchedBooks));
-      localStorage.setItem("books", JSON.stringify(fetchedBooks));
     }
   }, [fetchedBooks, isLoading, dispatch]);
 
@@ -86,7 +68,6 @@ const Header = () => {
   };
 
   const handleNewSeed = () => {
-    localStorage.clear(); // Clears all data from local storage
     location.reload(); // Refreshes the page
   };
 
@@ -108,7 +89,7 @@ const Header = () => {
     link.click();
   };
 
-  if (isLoading && shouldFetch) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading books.</p>;
 
   return (

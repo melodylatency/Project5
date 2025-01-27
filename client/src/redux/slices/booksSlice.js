@@ -3,9 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   books: [], // Load from localStorage
   language: "en",
-  seed:
-    JSON.parse(localStorage.getItem("seed")) ||
-    Math.floor(Math.random() * 1000000),
+  seed: Math.floor(Math.random() * 1000000),
   page: 2,
   reviews: 3,
   likes: 4.7,
@@ -26,7 +24,6 @@ const booksSlice = createSlice({
     },
     setSeed: (state, action) => {
       state.seed = action.payload;
-      localStorage.setItem("seed", JSON.stringify(state.seed));
     },
     setPage: (state, action) => {
       state.page = action.payload;
