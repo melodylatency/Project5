@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  books: JSON.parse(localStorage.getItem("books")) || [], // Load from localStorage
+  books: [], // Load from localStorage
   language: localStorage.getItem("language") || "en",
   seed:
     JSON.parse(localStorage.getItem("seed")) ||
@@ -17,7 +17,6 @@ const booksSlice = createSlice({
   reducers: {
     setBooks: (state, action) => {
       state.books = action.payload;
-      localStorage.setItem("books", JSON.stringify(state.books));
     },
     appendBooks: (state, action) => {
       state.books = [...state.books, ...action.payload];

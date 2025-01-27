@@ -17,7 +17,7 @@ const BookList = () => {
     error,
   } = useGetBooksQuery(
     { language, seed, page, reviewCount: reviews, likes },
-    { skip: !page } // Prevent unnecessary fetch on initial render
+    { skip: page === 2 } // Prevent unnecessary fetch on initial render
   );
 
   // Append new books to the list when new data is fetched
