@@ -71,15 +71,6 @@ const BookList = () => {
                                       {review.reviewer}
                                     </span>
                                     : {review.text}{" "}
-                                    <span
-                                      className={`${
-                                        review.rating < 5
-                                          ? "text-red-600"
-                                          : "text-green-600"
-                                      }`}
-                                    >
-                                      ({review.rating.toFixed(1)}/10)
-                                    </span>
                                   </li>
                                 ))}
                               </ul>
