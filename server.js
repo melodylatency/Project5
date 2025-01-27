@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import { faker } from "@faker-js/faker"; // Use @faker-js/faker
+import { faker } from "@faker-js/faker";
 import { fakerRU } from "@faker-js/faker";
 import { fakerNL } from "@faker-js/faker";
 import seedrandom from "seedrandom";
@@ -15,46 +15,41 @@ const __dirname = path.resolve();
 
 let API = faker;
 
-// Configure faker's locale dynamically based on language
 function setFakerLocale(language) {
   switch (language) {
     case "ru":
-      API = fakerRU; // Change locale directly
+      API = fakerRU;
       break;
     case "nl":
-      API = fakerNL; // Change locale directly
+      API = fakerNL;
       break;
     default:
-      API = faker; // Default to English
+      API = faker;
   }
 }
 
 function generateReviewCount(reviewCount, rng) {
-  const baseReviews = Math.floor(reviewCount); // Base number of reviews
-  const fractionalPart = reviewCount - baseReviews; // Fractional part
-
-  // Determine whether to add +1 review based on the fractional part
+  const baseReviews = Math.floor(reviewCount);
+  const fractionalPart = reviewCount - baseReviews;
   const hasExtraReview = rng() < fractionalPart ? 1 : 0;
 
   return baseReviews + hasExtraReview;
 }
 
 function generateLikeCount(likes, rng) {
-  const baseLikes = Math.floor(likes); // Base number of reviews
-  const fractionalPart = likes - baseLikes; // Fractional part
-
-  // Determine whether to add +1 review based on the fractional part
+  const baseLikes = Math.floor(likes);
+  const fractionalPart = likes - baseLikes;
   const hasExtraLike = rng() < fractionalPart ? 1 : 0;
 
   return baseLikes + hasExtraLike;
 }
 
 function generateBooks(language, seed, page, reviewCount, likes) {
-  const rng = seedrandom(seed + likes + reviewCount + page); // Use seedrandom for full control over randomness
+  const rng = seedrandom(seed + likes + reviewCount + page);
   setFakerLocale(language);
-  API.seed(seed + likes + reviewCount + page); // Ensure faker uses the same seed for internal randomness
+  API.seed(seed + likes + reviewCount + page);
 
-  const booksPerPage = page === 1 ? 20 : 10; // First page: 20 books, others: 10
+  const booksPerPage = page === 1 ? 20 : 10;
 
   const books = [];
   for (let i = 0; i < booksPerPage; i++) {
@@ -84,7 +79,6 @@ function generateBooks(language, seed, page, reviewCount, likes) {
   return books;
 }
 
-// API route to get book data
 app.get("/api/books", (req, res) => {
   const { language, seed, page, reviewCount, likes } = req.query;
 
@@ -114,7 +108,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

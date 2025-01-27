@@ -17,10 +17,9 @@ const BookList = () => {
     error,
   } = useGetBooksQuery(
     { language, seed, page, reviewCount: reviews, likes },
-    { skip: page === 2 } // Prevent unnecessary fetch on initial render
+    { skip: page === 2 }
   );
 
-  // Append new books to the list when new data is fetched
   React.useEffect(() => {
     if (fetchedBooks && !isLoading) {
       dispatch(appendBooks(fetchedBooks));
@@ -28,7 +27,7 @@ const BookList = () => {
   }, [fetchedBooks, isLoading, dispatch]);
 
   const fetchMoreBooks = () => {
-    dispatch(setPage(page + 1)); // Increment the page number
+    dispatch(setPage(page + 1));
   };
 
   const toggleExpand = (isbn) => {
@@ -42,12 +41,11 @@ const BookList = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Books Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <InfiniteScroll
           dataLength={books.length}
           next={fetchMoreBooks}
-          hasMore={books.length} // Replace 100 with a dynamic condition if needed
+          hasMore={books.length}
           loader={
             <div className="p-4 text-center">
               <h4 className="text-gray-600">Loading...</h4>

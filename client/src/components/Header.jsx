@@ -24,7 +24,6 @@ const Header = () => {
     dispatch(setLikes(likes));
   }, [dispatch, language, seed, reviews, likes]);
 
-  // Fetch books when necessary
   const {
     data: fetchedBooks,
     isLoading,
@@ -37,14 +36,12 @@ const Header = () => {
     likes,
   });
 
-  // Update books in state and localStorage whenever fetchedBooks change
   useEffect(() => {
     if (!isLoading && fetchedBooks) {
       dispatch(setBooks(fetchedBooks));
     }
   }, [fetchedBooks, isLoading, dispatch]);
 
-  // Handle dynamic changes to variables
   const handleLanguageChange = (e) => {
     dispatch(setLanguage(e.target.value));
   };
@@ -62,10 +59,9 @@ const Header = () => {
   };
 
   const handleNewSeed = () => {
-    location.reload(); // Refreshes the page
+    location.reload();
   };
 
-  // Handle CSV Export
   const handleExportCSV = () => {
     if (!books || books.length === 0) return;
     const csvData = books.map((book, index) => ({
