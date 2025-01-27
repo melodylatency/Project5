@@ -47,7 +47,7 @@ const BookList = () => {
         <InfiniteScroll
           dataLength={books.length}
           next={fetchMoreBooks}
-          hasMore={books.length < 100} // Replace 100 with a dynamic condition if needed
+          hasMore={books.length} // Replace 100 with a dynamic condition if needed
           loader={
             <div className="p-4 text-center">
               <h4 className="text-gray-600">Loading...</h4>
