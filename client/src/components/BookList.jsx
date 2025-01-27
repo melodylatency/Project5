@@ -63,12 +63,31 @@ const BookList = () => {
                             className="w-32 h-48 object-cover rounded-lg"
                           />
                           <div>
-                            <p className="font-semibold">Reviews:</p>
-                            <ul className="list-disc pl-4 text-sm text-gray-600">
-                              <li>"A wonderful read!" - Reviewer 1</li>
-                              <li>"Captivating story!" - Reviewer 2</li>
-                              <li>"Not my favorite." - Reviewer 3</li>
-                            </ul>
+                            {book.reviews.length > 0 ? (
+                              <ul className="list-disc pl-4 text-md text-gray-600">
+                                {book.reviews.map((review, index) => (
+                                  <li key={index}>
+                                    <span className="font-medium">
+                                      {review.reviewer}
+                                    </span>
+                                    : {review.text}{" "}
+                                    <span
+                                      className={`${
+                                        review.rating < 5
+                                          ? "text-red-600"
+                                          : "text-green-600"
+                                      }`}
+                                    >
+                                      ({review.rating.toFixed(1)}/10)
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm text-gray-500 italic">
+                                No reviews available.
+                              </p>
+                            )}
                           </div>
                         </div>
                       </td>
