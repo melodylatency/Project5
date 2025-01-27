@@ -107,8 +107,8 @@ const Header = () => {
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
       >
         <option value="en">English (USA)</option>
-        <option value="de">German (Germany)</option>
         <option value="ru">Russian (Russia)</option>
+        <option value="fr">French (France)</option>
       </select>
       <input
         type="number"
