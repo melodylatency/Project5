@@ -10,12 +10,14 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import BookList from "./components/BookList";
+import HomeScreen from "./screens/HomeScreen";
+import VideoScreen from "./screens/VideoScreen";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" index={true} element={<BookList />} />
+      <Route path="/" index={true} element={<HomeScreen />} />
+      <Route path="/video" element={<VideoScreen />} />
     </Route>
   )
 );
