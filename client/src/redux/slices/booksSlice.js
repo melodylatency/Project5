@@ -6,7 +6,7 @@ const initialState = {
   seed:
     JSON.parse(localStorage.getItem("seed")) ||
     Math.floor(Math.random() * 1000000),
-  page: 1,
+  page: 2,
   reviews: JSON.parse(localStorage.getItem("reviews")) || 3,
   likes: JSON.parse(localStorage.getItem("likes")) || 4.7,
 };
