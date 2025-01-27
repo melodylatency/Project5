@@ -117,14 +117,21 @@ const Header = () => {
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Enter seed"
       />
-      <input
-        type="number"
-        step="0.1"
-        value={reviews}
-        onChange={handleReviewsChange}
-        className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
-        placeholder="Avg reviews per book"
-      />
+      <div className="flex flex-col gap-2">
+        <label htmlFor="rating" className="text-sm font-medium text-gray-700">
+          Rating (0 to 10)
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="10"
+          step="0.1"
+          value={reviews}
+          onChange={handleReviewsChange}
+          className="w-full h-2 bg-blue-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+        />
+        <span className="text-sm text-gray-600">{reviews}</span>
+      </div>
       <button
         onClick={handleExportCSV}
         className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
