@@ -9,6 +9,7 @@ import {
   setLikes,
 } from "../redux/slices/booksSlice";
 import Papa from "papaparse";
+import { FaRandom } from "react-icons/fa";
 
 const Header = () => {
   const { language, seed, reviews, likes, books } = useSelector(
@@ -84,6 +85,11 @@ const Header = () => {
     setShouldFetch(true); // Trigger API call
   };
 
+  const handleNewSeed = () => {
+    localStorage.clear(); // Clears all data from local storage
+    location.reload(); // Refreshes the page
+  };
+
   // Handle CSV Export
   const handleExportCSV = () => {
     if (!books || books.length === 0) return;
@@ -148,9 +154,15 @@ const Header = () => {
       </div>
       <button
         onClick={handleExportCSV}
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+        className="flex bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
       >
         Export to CSV
+      </button>
+      <button
+        onClick={handleNewSeed}
+        className="flex bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+      >
+        <FaRandom />
       </button>
     </div>
   );
