@@ -4,11 +4,14 @@ import { faker } from "@faker-js/faker"; // Use @faker-js/faker
 import { fakerRU } from "@faker-js/faker";
 import { fakerFR } from "@faker-js/faker";
 import seedrandom from "seedrandom";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+const __dirname = path.resolve();
 
 let API = faker;
 
@@ -100,10 +103,10 @@ app.get("/api/books", (req, res) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "frontend/build")));
+  app.use(express.static(path.join(__dirname, "client/build")));
 
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"))
   );
 } else {
   app.get("/", (req, res) => {
