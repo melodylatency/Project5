@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
-import faker from "faker";
+import { faker } from "@faker-js/faker"; // Use @faker-js/faker
+import { fakerRU } from "@faker-js/faker";
+import { fakerFR } from "@faker-js/faker";
 import seedrandom from "seedrandom";
 
 dotenv.config();
@@ -8,40 +10,55 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+let API = faker;
+
 // Configure faker's locale dynamically based on language
 function setFakerLocale(language) {
   switch (language) {
-    case "de":
-      faker.locale = "de";
+    case "ru":
+      API = fakerRU; // Change locale directly
       break;
     case "fr":
-      faker.locale = "fr";
+      API = fakerFR; // Change locale directly
       break;
     default:
-      faker.locale = "en";
+      API = faker; // Default to English
   }
 }
 
-// Generate random books based on user input
+function generateReviewCount(reviewCount, rng) {
+  const baseReviews = Math.floor(reviewCount); // Base number of reviews
+  const fractionalPart = reviewCount - baseReviews; // Fractional part
+
+  // Determine whether to add +1 review based on the fractional part
+  const hasExtraReview = rng() < fractionalPart ? 1 : 0;
+
+  return baseReviews + hasExtraReview;
+}
+
 function generateBooks(language, seed, page, reviewCount) {
   const rng = seedrandom(`${language}-${seed}-${page}`);
   const books = [];
 
-  // Set faker locale based on selected language
   setFakerLocale(language);
 
   for (let i = 0; i < 10; i++) {
     const bookReviews =
-      rng() < reviewCount ? Math.ceil(rng() * reviewCount) : 0;
+      reviewCount > 0 ? generateReviewCount(reviewCount, rng) : 0;
+
+    const reviews = Array.from({ length: bookReviews }, () => ({
+      reviewer: API.person.fullName(),
+      text: API.word.words({ count: { min: 5, max: 10 } }),
+    }));
 
     const book = {
       index: i + 1 + (page - 1) * 10,
-      isbn: faker.datatype.uuid(),
-      title: faker.commerce.productName(), // Replace this with localized logic if needed
-      author: faker.name.findName(),
-      publisher: faker.company.companyName(),
-      reviews: bookReviews,
-      coverImage: faker.image.imageUrl(),
+      isbn: API.string.uuid(),
+      title: API.commerce.productName(),
+      author: API.person.fullName(),
+      publisher: API.company.name(),
+      reviews,
+      coverImage: API.image.urlPicsumPhotos(),
     };
     books.push(book);
   }
