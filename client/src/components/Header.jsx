@@ -95,7 +95,7 @@ const Header = () => {
       >
         <option value="en">English (USA)</option>
         <option value="ru">Russian (Russia)</option>
-        <option value="fr">French (France)</option>
+        <option value="nl">Netherlands (Dutch)</option>
       </select>
       <input
         type="number"

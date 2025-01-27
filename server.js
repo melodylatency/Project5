@@ -21,7 +21,7 @@ function setFakerLocale(language) {
     case "ru":
       API = fakerRU; // Change locale directly
       break;
-    case "fr":
+    case "nl":
       API = fakerNL; // Change locale directly
       break;
     default:
