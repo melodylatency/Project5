@@ -24,69 +24,44 @@ const Header = () => {
     dispatch(setLikes(likes));
   }, [dispatch, language, seed, reviews, likes]);
 
-  const [shouldFetch, setShouldFetch] = useState(false);
-
   // Fetch books when necessary
   const {
     data: fetchedBooks,
     isLoading,
     error,
-  } = useGetBooksQuery(
-    {
-      language,
-      seed,
-      page: 1,
-      reviewCount: reviews,
-      likes,
-    },
-    {
-      skip: !shouldFetch, // Skip the query on initial load unless user changes variables
-    }
-  );
-
-  // On first load, check for localStorage books
-  useEffect(() => {
-    const storedBooks = JSON.parse(localStorage.getItem("books"));
-    if (storedBooks?.length > 0) {
-      // Use localStorage data on first load
-      dispatch(setBooks(storedBooks));
-    } else {
-      // If no books in localStorage, fetch from backend
-      setShouldFetch(true);
-    }
-  }, [dispatch]);
+  } = useGetBooksQuery({
+    language,
+    seed,
+    page: 1,
+    reviewCount: reviews,
+    likes,
+  });
 
   // Update books in state and localStorage whenever fetchedBooks change
   useEffect(() => {
     if (!isLoading && fetchedBooks) {
       dispatch(setBooks(fetchedBooks));
-      localStorage.setItem("books", JSON.stringify(fetchedBooks));
     }
   }, [fetchedBooks, isLoading, dispatch]);
 
   // Handle dynamic changes to variables
   const handleLanguageChange = (e) => {
     dispatch(setLanguage(e.target.value));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleSeedChange = (e) => {
     dispatch(setSeed(Number(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleReviewsChange = (e) => {
     dispatch(setReviews(parseFloat(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleLikesChange = (e) => {
     dispatch(setLikes(parseFloat(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleNewSeed = () => {
-    localStorage.clear(); // Clears all data from local storage
     location.reload(); // Refreshes the page
   };
 
@@ -108,7 +83,7 @@ const Header = () => {
     link.click();
   };
 
-  if (isLoading && shouldFetch) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading books.</p>;
 
   return (
@@ -120,7 +95,7 @@ const Header = () => {
       >
         <option value="en">English (USA)</option>
         <option value="ru">Russian (Russia)</option>
-        <option value="fr">French (France)</option>
+        <option value="nl">Netherlands (Dutch)</option>
       </select>
       <input
         type="number"
