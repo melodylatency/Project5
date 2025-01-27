@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { faker } from "@faker-js/faker"; // Use @faker-js/faker
 import { fakerRU } from "@faker-js/faker";
-import { fakerFR } from "@faker-js/faker";
+import { fakerNL } from "@faker-js/faker";
 import seedrandom from "seedrandom";
 import path from "path";
 
@@ -22,7 +22,7 @@ function setFakerLocale(language) {
       API = fakerRU; // Change locale directly
       break;
     case "fr":
-      API = fakerFR; // Change locale directly
+      API = fakerNL; // Change locale directly
       break;
     default:
       API = faker; // Default to English
