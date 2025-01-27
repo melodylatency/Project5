@@ -19,6 +19,9 @@ const booksSlice = createSlice({
       state.books = action.payload;
       localStorage.setItem("books", JSON.stringify(state.books));
     },
+    appendBooks: (state, action) => {
+      state.books = [...state.books, ...action.payload];
+    },
     setLanguage: (state, action) => {
       state.language = action.payload;
       localStorage.setItem("language", state.language);
@@ -41,7 +44,14 @@ const booksSlice = createSlice({
   },
 });
 
-export const { setBooks, setLanguage, setSeed, setPage, setReviews, setLikes } =
-  booksSlice.actions;
+export const {
+  setBooks,
+  appendBooks,
+  setLanguage,
+  setSeed,
+  setPage,
+  setReviews,
+  setLikes,
+} = booksSlice.actions;
 
 export default booksSlice.reducer;

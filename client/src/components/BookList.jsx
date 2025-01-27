@@ -1,11 +1,35 @@
 import React, { useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useGetBooksQuery } from "../redux/slices/booksApiSlice";
+import { appendBooks, setPage } from "../redux/slices/booksSlice";
 
 const BookList = () => {
   const [expandedRows, setExpandedRows] = useState({});
+  const { books, language, seed, page, reviews, likes } = useSelector(
+    (state) => state.books
+  );
+  const dispatch = useDispatch();
 
-  const books = useSelector((state) => state.books.books || []);
+  const {
+    data: fetchedBooks,
+    isLoading,
+    error,
+  } = useGetBooksQuery(
+    { language, seed, page, reviewCount: reviews, likes },
+    { skip: !page } // Prevent unnecessary fetch on initial render
+  );
+
+  // Append new books to the list when new data is fetched
+  React.useEffect(() => {
+    if (fetchedBooks && !isLoading) {
+      dispatch(appendBooks(fetchedBooks));
+    }
+  }, [fetchedBooks, isLoading, dispatch]);
+
+  const fetchMoreBooks = () => {
+    dispatch(setPage(page + 1)); // Increment the page number
+  };
 
   const toggleExpand = (isbn) => {
     setExpandedRows((prev) => ({
@@ -14,14 +38,16 @@ const BookList = () => {
     }));
   };
 
+  if (error) return <p>Error loading books.</p>;
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* Books Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <InfiniteScroll
           dataLength={books.length}
-          next={() => {}}
-          hasMore={books.length < 100}
+          next={fetchMoreBooks}
+          hasMore={books.length < 100} // Replace 100 with a dynamic condition if needed
           loader={
             <div className="p-4 text-center">
               <h4 className="text-gray-600">Loading...</h4>
