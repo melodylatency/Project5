@@ -47,9 +47,9 @@ function generateLikeCount(likes, rng) {
 }
 
 function generateBooks(language, seed, page, reviewCount, likes) {
-  const rng = seedrandom(seed + likes + reviewCount); // Use seedrandom for full control over randomness
+  const rng = seedrandom(seed + likes + reviewCount + page); // Use seedrandom for full control over randomness
   setFakerLocale(language);
-  API.seed(seed + likes + reviewCount); // Ensure faker uses the same seed for internal randomness
+  API.seed(seed + likes + reviewCount + page); // Ensure faker uses the same seed for internal randomness
 
   const booksPerPage = page === 1 ? 20 : 10; // First page: 20 books, others: 10
 
