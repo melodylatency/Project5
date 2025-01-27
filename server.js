@@ -38,9 +38,8 @@ function generateReviewCount(reviewCount, rng) {
 
 function generateBooks(language, seed, page, reviewCount) {
   const rng = seedrandom(seed); // Use seedrandom for full control over randomness
-  faker.seed(seed); // Ensure faker uses the same seed for internal randomness
-
   setFakerLocale(language);
+  API.seed(seed); // Ensure faker uses the same seed for internal randomness
 
   const books = [];
   for (let i = 0; i < 10; i++) {
