@@ -48,7 +48,7 @@ function generateBooks(language, seed, page, reviewCount) {
 
     const reviews = Array.from({ length: bookReviews }, () => ({
       reviewer: API.person.fullName(),
-      text: API.word.words({ count: { min: 5, max: 10 } }),
+      text: API.git.commitMessage(),
     }));
 
     const book = {
