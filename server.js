@@ -41,8 +41,10 @@ function generateBooks(language, seed, page, reviewCount) {
   setFakerLocale(language);
   API.seed(seed); // Ensure faker uses the same seed for internal randomness
 
+  const booksPerPage = page === 1 ? 20 : 10; // First page: 20 books, others: 10
+
   const books = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < booksPerPage; i++) {
     const bookReviews =
       reviewCount > 0 ? generateReviewCount(reviewCount, rng) : 0;
 
@@ -52,7 +54,7 @@ function generateBooks(language, seed, page, reviewCount) {
     }));
 
     const book = {
-      index: i + 1 + (page - 1) * 10,
+      index: i + 1 + (page - 1) * booksPerPage,
       isbn: API.string.uuid(),
       title: API.commerce.productName(),
       author: API.person.fullName(),

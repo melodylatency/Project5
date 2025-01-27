@@ -6,7 +6,7 @@ const initialState = {
   seed:
     JSON.parse(localStorage.getItem("seed")) ||
     Math.floor(Math.random() * 1000000),
-  page: JSON.parse(localStorage.getItem("page")) || 1,
+  page: 1,
   reviews: JSON.parse(localStorage.getItem("reviews")) || 3,
 };
 
@@ -28,7 +28,6 @@ const booksSlice = createSlice({
     },
     setPage: (state, action) => {
       state.page = action.payload;
-      localStorage.setItem("page", JSON.stringify(state.page));
     },
     setReviews: (state, action) => {
       state.reviews = action.payload;
