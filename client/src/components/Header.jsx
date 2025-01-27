@@ -23,7 +23,7 @@ const Header = () => {
     dispatch(setReviews(reviews));
     dispatch(setLikes(likes));
     dispatch(setPage(page));
-  }, [dispatch, language, seed, reviews, page]);
+  }, [dispatch, language, seed, reviews, page, likes]);
 
   const [shouldFetch, setShouldFetch] = useState(false);
 
