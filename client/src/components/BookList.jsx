@@ -57,11 +57,14 @@ const BookList = () => {
                     <tr>
                       <td colSpan={6} className="p-4 bg-gray-100">
                         <div className="flex space-x-4">
-                          <img
-                            src={book.coverImage}
-                            alt={`${book.title} cover`}
-                            className="w-32 h-48 object-cover rounded-lg"
-                          />
+                          <div className="flex flex-col">
+                            <img
+                              src={book.coverImage}
+                              alt={`${book.title} cover`}
+                              className="w-32 h-48 object-cover rounded-lg"
+                            />
+                            <span>Likes: {book.bookLikes}</span>
+                          </div>
                           <div>
                             {book.reviews.length > 0 ? (
                               <ul className="list-disc pl-4 text-md text-gray-600">

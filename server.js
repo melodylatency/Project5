@@ -36,7 +36,17 @@ function generateReviewCount(reviewCount, rng) {
   return baseReviews + hasExtraReview;
 }
 
-function generateBooks(language, seed, page, reviewCount) {
+function generateLikeCount(likes, rng) {
+  const baseLikes = Math.floor(likes); // Base number of reviews
+  const fractionalPart = likes - baseLikes; // Fractional part
+
+  // Determine whether to add +1 review based on the fractional part
+  const hasExtraLike = rng() < fractionalPart ? 1 : 0;
+
+  return baseLikes + hasExtraLike;
+}
+
+function generateBooks(language, seed, page, reviewCount, likes) {
   const rng = seedrandom(seed); // Use seedrandom for full control over randomness
   setFakerLocale(language);
   API.seed(seed); // Ensure faker uses the same seed for internal randomness
@@ -47,6 +57,8 @@ function generateBooks(language, seed, page, reviewCount) {
   for (let i = 0; i < booksPerPage; i++) {
     const bookReviews =
       reviewCount > 0 ? generateReviewCount(reviewCount, rng) : 0;
+
+    const bookLikes = likes > 0 ? generateLikeCount(likes, rng) : 0;
 
     const reviews = Array.from({ length: bookReviews }, () => ({
       reviewer: API.person.fullName(),
@@ -60,6 +72,7 @@ function generateBooks(language, seed, page, reviewCount) {
       author: API.person.fullName(),
       publisher: API.company.name(),
       reviews,
+      bookLikes,
       coverImage: API.image.urlPicsumPhotos(),
     };
     books.push(book);
@@ -70,9 +83,9 @@ function generateBooks(language, seed, page, reviewCount) {
 
 // API route to get book data
 app.get("/api/books", (req, res) => {
-  const { language, seed, page, reviewCount } = req.query;
+  const { language, seed, page, reviewCount, likes } = req.query;
 
-  if (!language || !seed || !page || !reviewCount) {
+  if (!language || !seed || !page || !reviewCount || !likes) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
 
@@ -80,7 +93,8 @@ app.get("/api/books", (req, res) => {
     language,
     seed,
     parseInt(page),
-    parseFloat(reviewCount)
+    parseFloat(reviewCount),
+    parseFloat(likes)
   );
   res.json(books);
 });

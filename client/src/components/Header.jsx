@@ -7,11 +7,12 @@ import {
   setSeed,
   setReviews,
   setPage,
+  setLikes,
 } from "../redux/slices/booksSlice";
 import Papa from "papaparse";
 
 const Header = () => {
-  const { language, seed, reviews, page, books } = useSelector(
+  const { language, seed, reviews, likes, page, books } = useSelector(
     (state) => state.books
   );
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const Header = () => {
     dispatch(setLanguage(language));
     dispatch(setSeed(seed));
     dispatch(setReviews(reviews));
+    dispatch(setLikes(likes));
     dispatch(setPage(page));
   }, [dispatch, language, seed, reviews, page]);
 
@@ -36,6 +38,7 @@ const Header = () => {
       seed,
       page,
       reviewCount: reviews,
+      likes,
     },
     {
       skip: !shouldFetch, // Skip the query on initial load unless user changes variables
@@ -78,6 +81,11 @@ const Header = () => {
     setShouldFetch(true); // Trigger API call
   };
 
+  const handleLikesChange = (e) => {
+    dispatch(setLikes(parseFloat(e.target.value)));
+    setShouldFetch(true); // Trigger API call
+  };
+
   // Handle CSV Export
   const handleExportCSV = () => {
     if (!books || books.length === 0) return;
@@ -117,6 +125,14 @@ const Header = () => {
         className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
         placeholder="Enter seed"
       />
+      <input
+        type="number"
+        step="0.1"
+        value={reviews}
+        onChange={handleReviewsChange}
+        className="border border-gray-300 rounded-lg p-2 bg-white shadow-sm focus:outline-none focus:ring focus:ring-blue-200"
+        placeholder="Avg reviews per book"
+      />
       <div className="flex flex-col gap-2">
         <label htmlFor="rating" className="text-sm font-medium text-gray-700">
           Rating (0 to 10)
@@ -126,11 +142,11 @@ const Header = () => {
           min="0"
           max="10"
           step="0.1"
-          value={reviews}
-          onChange={handleReviewsChange}
+          value={likes}
+          onChange={handleLikesChange}
           className="w-full h-2 bg-blue-200 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
         />
-        <span className="text-sm text-gray-600">{reviews}</span>
+        <span className="text-sm text-gray-600">{likes}</span>
       </div>
       <button
         onClick={handleExportCSV}

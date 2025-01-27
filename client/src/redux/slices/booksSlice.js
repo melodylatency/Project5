@@ -8,6 +8,7 @@ const initialState = {
     Math.floor(Math.random() * 1000000),
   page: 1,
   reviews: JSON.parse(localStorage.getItem("reviews")) || 3,
+  likes: JSON.parse(localStorage.getItem("likes")) || 4.7,
 };
 
 const booksSlice = createSlice({
@@ -33,10 +34,14 @@ const booksSlice = createSlice({
       state.reviews = action.payload;
       localStorage.setItem("reviews", JSON.stringify(state.reviews));
     },
+    setLikes: (state, action) => {
+      state.likes = action.payload;
+      localStorage.setItem("likes", JSON.stringify(state.likes));
+    },
   },
 });
 
-export const { setBooks, setLanguage, setSeed, setPage, setReviews } =
+export const { setBooks, setLanguage, setSeed, setPage, setReviews, setLikes } =
   booksSlice.actions;
 
 export default booksSlice.reducer;
