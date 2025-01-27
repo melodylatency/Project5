@@ -24,8 +24,6 @@ const Header = () => {
     dispatch(setLikes(likes));
   }, [dispatch, language, seed, reviews, likes]);
 
-  const [shouldFetch, setShouldFetch] = useState(false);
-
   // Fetch books when necessary
   const {
     data: fetchedBooks,
@@ -49,22 +47,18 @@ const Header = () => {
   // Handle dynamic changes to variables
   const handleLanguageChange = (e) => {
     dispatch(setLanguage(e.target.value));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleSeedChange = (e) => {
     dispatch(setSeed(Number(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleReviewsChange = (e) => {
     dispatch(setReviews(parseFloat(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleLikesChange = (e) => {
     dispatch(setLikes(parseFloat(e.target.value)));
-    setShouldFetch(true); // Trigger API call
   };
 
   const handleNewSeed = () => {
