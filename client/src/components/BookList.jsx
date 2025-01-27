@@ -3,7 +3,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector, useDispatch } from "react-redux";
 import { useGetBooksQuery } from "../redux/slices/booksApiSlice";
 import { appendBooks, setPage } from "../redux/slices/booksSlice";
-import { FaRandom } from "react-icons/fa";
 
 const BookList = () => {
   const [expandedRows, setExpandedRows] = useState({});
