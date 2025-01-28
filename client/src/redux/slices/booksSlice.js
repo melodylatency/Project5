@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  books: [], // Load from localStorage
+  books: [],
   language: "en",
   seed: Math.floor(Math.random() * 1000000),
   page: 2,
