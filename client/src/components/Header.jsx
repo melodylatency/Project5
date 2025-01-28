@@ -7,6 +7,7 @@ import {
   setSeed,
   setReviews,
   setLikes,
+  setPage,
 } from "../redux/slices/booksSlice";
 import Papa from "papaparse";
 import { FaRandom } from "react-icons/fa";
@@ -22,6 +23,7 @@ const Header = () => {
     dispatch(setSeed(seed));
     dispatch(setReviews(reviews));
     dispatch(setLikes(likes));
+    dispatch(setPage(2));
   }, [dispatch, language, seed, reviews, likes]);
 
   const {
